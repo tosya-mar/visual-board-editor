@@ -53,13 +53,13 @@ export const eslintBoundariesConfig = {
               "The module of the underlying layer (${file.type}) cannot import the module of the overlying layer (${dependency.type})",
           },
           {
-            to: { type: "features", internalPath: "!index.(ts|tsx)" },
+            to: { type: "features", internalPath: "!{index.(ts|tsx),*.page.tsx}" },
             disallow: {
               from: { type: "*" },
             },
             message:
               "The module (${file.type}) must be imported via the public API. Direct import from ${dependency.source} is prohibited",
-          },
+          }
         ],
       },
     ],

@@ -1,0 +1,17 @@
+openapi: 3.0.0
+info:
+  title: Visual Bord Editor
+  description: API for collaboration on whiteboards
+  version: 1.0.0
+
+paths:
+  /boards:
+    get:
+      $ref: "./routes/boards.yaml#/getAllBoards"
+
+    post:
+      $ref: "./routes/boards.yaml#/createBoard"
+
+  /boards/{boardId}:
+    delete:
+      $ref: "./routes/boards.yaml#/deleteBoard"
