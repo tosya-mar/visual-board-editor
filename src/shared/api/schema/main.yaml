@@ -15,3 +15,11 @@ paths:
   /boards/{boardId}:
     delete:
       $ref: "./routes/boards.yaml#/deleteBoard"
+
+  /auth/login:
+    post:
+      $ref: "./routes/auth.yaml#/login"
+
+  /auth/register:
+    post:
+      $ref: "./routes/auth.yaml#/register"
