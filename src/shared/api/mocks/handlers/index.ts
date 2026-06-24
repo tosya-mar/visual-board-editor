@@ -1,6 +1,7 @@
 import { HttpResponse } from "msw";
 import { http } from "../http";
 import type { ApiSchemas } from "@shared/api/schema";
+import { verifyTokenOrThrow } from "./session";
 
 const boards: ApiSchemas["Board"][] = [
   {
@@ -14,10 +15,15 @@ const boards: ApiSchemas["Board"][] = [
 ];
 
 export const handlers = [
-  http.get("/boards", () => {
+  http.get("/boards", async (ctx) => {
+    await verifyTokenOrThrow(ctx.request);
+
     return HttpResponse.json(boards);
   }),
+
   http.post("/boards", async (ctx) => {
+    await verifyTokenOrThrow(ctx.request);
+
     const data = await ctx.request.json();
 
     const board = {
@@ -28,6 +34,7 @@ export const handlers = [
     boards.push(board);
     return HttpResponse.json(board);
   }),
+
   http.delete("/boards/{boardId}", ({ params }) => {
     const { boardId } = params;
 

@@ -4,6 +4,13 @@ info:
   description: API for collaboration on whiteboards
   version: 1.0.0
 
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
 paths:
   /boards:
     get:
@@ -23,3 +30,7 @@ paths:
   /auth/register:
     post:
       $ref: "./routes/auth.yaml#/register"
+
+  /auth/refresh:
+    post:
+      $ref: "./routes/auth.yaml#/refresh"
