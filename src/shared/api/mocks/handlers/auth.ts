@@ -1,7 +1,11 @@
 import type { ApiSchemas } from "@shared/api/schema";
 import { http } from "../http";
 import { delay, HttpResponse } from "msw";
-import { createRefreshTokenCookie, generateTokens } from "./session";
+import {
+  createRefreshTokenCookie,
+  generateTokens,
+  verifyToken,
+} from "./session";
 
 const userPasswords = new Map<string, string>();
 const mockUsers: ApiSchemas["User"][] = [
@@ -90,8 +94,8 @@ export const authHandlers = [
       },
     );
   }),
-  http.post("/auth/refresh", async ({ request }) => {
-    const { refreshToken } = request.cookies;
+  http.post("/auth/refresh", async ({ cookies }) => {
+    const refreshToken = cookies.refreshToken;
 
     if (!refreshToken) {
       return HttpResponse.json(
