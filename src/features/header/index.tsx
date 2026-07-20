@@ -14,9 +14,10 @@ export function AppHeader() {
     <header className="shrink-0 bg-background border-b border-border/40 shadow-sm py-3 px-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <button
-          className="text-xl font-semibold cursor-pointer"
+          className="flex items-center gap-2 text-xl font-semibold cursor-pointer"
           onClick={() => navigate("/")}
         >
+          <img src="/logo.png" alt="" className="size-8 rounded-md" />
           Board Editor
         </button>
 

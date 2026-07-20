@@ -19,8 +19,12 @@ export default function AuthLayout({
   footer: React.ReactNode;
 }) {
   return (
-    <main className="flex flex-col pt-[200px] items-center text-start">
-      <Card className="w-full max-w-[400px] p-5">
+    <main className="flex flex-col pt-15 items-center text-start gap-10">
+      <button className="flex items-center gap-2 text-xl font-semibold cursor-pointer">
+        <img src="/logo.png" alt="" className="size-8 rounded-md" />
+        Board Editor
+      </button>
+      <Card className="w-full max-w-[400px] p-5 ">
         <CardHeader>
           <CardTitle>{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
