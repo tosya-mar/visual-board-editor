@@ -15,13 +15,22 @@ paths:
   /boards:
     get:
       $ref: "./routes/boards.yaml#/getAllBoards"
-
     post:
       $ref: "./routes/boards.yaml#/createBoard"
 
   /boards/{boardId}:
+    get:
+      $ref: "./routes/boards.yaml#/getBoardById"
     delete:
       $ref: "./routes/boards.yaml#/deleteBoard"
+
+  /boards/{boardId}/favorite:
+    put:
+      $ref: "./routes/boards.yaml#/updateBoardFavorite"
+
+  /boards/{boardId}/rename:
+    put:
+      $ref: "./routes/boards.yaml#/renameBoard"
 
   /auth/login:
     post:

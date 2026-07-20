@@ -27,7 +27,7 @@ export default function AuthLayout({
         </CardHeader>
 
         <CardContent>{form}</CardContent>
-        <CardFooter>
+        <CardFooter className="bg-accent-foreground">
           <p className="text-sm text-muted-foreground [&_a]:underline [&_a]:text-primary">
             {footer}
           </p>

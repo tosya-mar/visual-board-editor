@@ -10,8 +10,8 @@
   --bg: #fff;
   --border: oklch(0.922 0 0);
   --code-bg: #f4f3ec;
-  --accent: oklch(0.97 0 0);
-  --accent-bg: rgba(170, 59, 255, 0.1);
+  --accent: oklch(0.7107 0.1406 274.24);
+  --accent-bg: rgba(206, 166, 237, 0.1);
   --accent-border: rgba(170, 59, 255, 0.5);
   --social-bg: rgba(244, 243, 236, 0.5);
   --shadow:
@@ -59,7 +59,9 @@
 
   --muted-foreground: oklch(0.556 0 0);
 
-  --accent-foreground: oklch(0.205 0 0);
+  --accent: oklch(0.7107 0.1406 274.24);
+
+  --accent-foreground: oklch(1 0 0);
 
   --destructive: oklch(0.577 0.245 27.325);
 

@@ -25,8 +25,8 @@ export default function LoginForm() {
   const form = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: "",
-      password: "",
+      email: "admin@gmail.com", // TODO: remove this later
+      password: "123456", // TODO: remove this later
     },
   });
 
@@ -45,6 +45,7 @@ export default function LoginForm() {
               <FieldLabel>Email</FieldLabel>
               <Input
                 {...field}
+                value="admin@gmail.com" // TODO: remove this later
                 id={field.name}
                 aria-invalid={fieldState.invalid}
                 placeholder="admin@gmail.com"
@@ -68,6 +69,7 @@ export default function LoginForm() {
               <FieldLabel>Пароль</FieldLabel>
               <Input
                 {...field}
+                value="123456" // TODO: remove this later
                 id={field.name}
                 aria-invalid={fieldState.invalid}
                 placeholder="********"
