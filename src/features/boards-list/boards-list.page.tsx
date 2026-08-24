@@ -1,27 +1,7 @@
-// TODO: decompose this file
-
 import { rqClient } from "@shared/api/instance";
 import { cn } from "@shared/lib/css";
 import { ROUTES } from "@shared/model/routes";
 import { Button } from "@shared/ui/kit/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@shared/ui/kit/dialog";
-import {
-  DropdownMenu,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-} from "@shared/ui/kit/dropdown-menu";
-import { Field } from "@shared/ui/kit/field";
-import { Input } from "@shared/ui/kit/input";
-import { Skeleton } from "@shared/ui/kit/skeleton";
 import {
   Table,
   TableCell,
@@ -30,68 +10,71 @@ import {
   TableHead,
   TableRow,
 } from "@shared/ui/kit/table";
-import { useQueryClient } from "@tanstack/react-query";
-import {
-  EllipsisVerticalIcon,
-  PlusIcon,
-  StarIcon,
-  TrashIcon,
-} from "lucide-react";
-import { useState } from "react";
+import { PlusIcon, StarIcon } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { BoardsTableSkeleton } from "./boards-table-skeleton";
+import { BoardActions } from "./board-actions";
+import { useBoardsList } from "./use-boards-list";
+import {
+  Select,
+  SelectItem,
+  SelectContent,
+  SelectTrigger,
+  SelectValue,
+  SelectLabel,
+  SelectGroup,
+} from "@shared/ui/kit/select";
 
 function BoardsListPage() {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const boardsQuery = rqClient.useQuery("get", "/boards", {
-    params: { query: {} },
-  });
 
-  const createBoard = rqClient.useMutation("post", "/boards", {
-    onSettled: async () => {
-      await queryClient.invalidateQueries(
-        rqClient.queryOptions("get", "/boards"),
-      );
-    },
-  });
-
-  const renameBoard = rqClient.useMutation("put", "/boards/{boardId}/rename", {
-    onSettled: async () => {
-      await queryClient.invalidateQueries(
-        rqClient.queryOptions("get", "/boards"),
-      );
-    },
-  });
-
-  const favoriteBoard = rqClient.useMutation(
-    "put",
-    "/boards/{boardId}/favorite",
-    {
-      onSettled: async () => {
-        await queryClient.invalidateQueries(
-          rqClient.queryOptions("get", "/boards"),
-        );
-      },
-    },
-  );
-
-  const deleteBoard = rqClient.useMutation("delete", "/boards/{boardId}", {
-    onSuccess: () => {
-      queryClient.invalidateQueries(rqClient.queryOptions("get", "/boards"));
-    },
-  });
+  const {
+    boardsQuery,
+    createBoard,
+    renameBoard,
+    favoriteBoard,
+    deleteBoard,
+    setSearchParams,
+  } = useBoardsList();
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4 p-4">
-      <Button
-        onClick={() => {
-          createBoard.mutate({});
-        }}
-        className="shrink-0 self-end p-4 cursor-pointer"
-        disabled={createBoard.isPending}
-      >
-        Создать доску <PlusIcon className="w-4 h-4" fill="var(--accent)" />
-      </Button>
+      <div className="flex items-center justify-between gap-2">
+        <Select
+          defaultValue="createdAt"
+          onValueChange={(value) => {
+            setSearchParams({ sort: value });
+          }}
+        >
+          <SelectGroup>
+            <div className="flex items-center gap-2">
+              <SelectLabel>Сортировать по:</SelectLabel>
+              <SelectTrigger>
+                <SelectValue placeholder="Дате создания" />
+              </SelectTrigger>
+            </div>
+
+            <SelectContent>
+              <SelectItem value="createdAt">Дате создания</SelectItem>
+              <SelectItem value="name">Названию</SelectItem>
+              <SelectItem value="updatedAt">Дате обновления</SelectItem>
+              <SelectItem value="lastOpenedAt">
+                Дате последнего открытия
+              </SelectItem>
+            </SelectContent>
+          </SelectGroup>
+        </Select>
+
+        <Button
+          onClick={() => {
+            createBoard.mutate({});
+          }}
+          className="shrink-0 self-end p-4 cursor-pointer"
+          disabled={createBoard.isPending}
+        >
+          Создать доску <PlusIcon className="w-4 h-4" fill="var(--accent)" />
+        </Button>
+      </div>
 
       <div className="min-h-0 flex-1">
         {boardsQuery.isPending ? (
@@ -172,181 +155,6 @@ function BoardsListPage() {
         )}
       </div>
     </div>
-  );
-}
-
-function BoardActions({
-  boardId,
-  boardName,
-  onRename,
-  onDelete,
-  isPending,
-}: {
-  boardId: string;
-  boardName: string;
-  onRename: (name: string) => Promise<unknown>;
-  onDelete: () => Promise<unknown>;
-  isPending: boolean;
-}) {
-  const [renameOpen, setRenameOpen] = useState(false);
-  const [deleteOpen, setDeleteOpen] = useState(false);
-
-  return (
-    <>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" type="reset">
-            <EllipsisVerticalIcon className="w-4 h-4" />
-          </Button>
-        </DropdownMenuTrigger>
-
-        <DropdownMenuContent>
-          <DropdownMenuItem
-            className="cursor-pointer focus:bg-muted focus:text-black"
-            onSelect={() => setRenameOpen(true)}
-          >
-            Rename
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="cursor-pointer focus:bg-muted focus:text-black"
-            onSelect={() => setDeleteOpen(true)}
-          >
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-
-      <Dialog open={renameOpen} onOpenChange={setRenameOpen}>
-        <DialogContent>
-          <form
-            onSubmit={async (event) => {
-              event.preventDefault();
-              const formData = new FormData(event.currentTarget);
-              const name = String(formData.get("name") ?? "").trim();
-
-              if (!name) {
-                return;
-              }
-
-              try {
-                await onRename(name);
-                setRenameOpen(false);
-              } catch {}
-            }}
-          >
-            <DialogHeader>
-              <DialogTitle>Rename Board</DialogTitle>
-              <DialogDescription className="mb-4">
-                Enter the new name for the board.
-              </DialogDescription>
-            </DialogHeader>
-
-            <Field>
-              <Input
-                id={`name-${boardId}`}
-                name="name"
-                defaultValue={boardName}
-              />
-            </Field>
-
-            <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Cancel</Button>
-              </DialogClose>
-              <Button type="submit" disabled={isPending}>
-                Save
-              </Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Delete Board</DialogTitle>
-            <DialogDescription className="mt-4 mb-4">
-              Are you sure you want to delete this board?
-            </DialogDescription>
-          </DialogHeader>
-
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button
-              type="button"
-              variant="destructive"
-              onClick={async () => {
-                try {
-                  await onDelete();
-                  setDeleteOpen(false);
-                } catch {
-                  // keep dialog open on error
-                }
-              }}
-              disabled={isPending}
-            >
-              <TrashIcon className="w-4 h-4" />
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
-  );
-}
-
-function BoardsTableSkeleton({ rows = 10 }: { rows?: number }) {
-  const nameWidths = [
-    "w-2/5",
-    "w-1/3",
-    "w-1/2",
-    "w-3/5",
-    "w-2/5",
-    "w-1/4",
-    "w-1/2",
-    "w-1/3",
-    "w-2/5",
-    "w-1/2",
-  ];
-
-  return (
-    <Table>
-      <TableHeader>
-        <TableRow className="cursor-default hover:bg-transparent">
-          <TableHead>Name</TableHead>
-          <TableHead>Created At</TableHead>
-          <TableHead>Updated At</TableHead>
-          <TableHead />
-          <TableHead />
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {Array.from({ length: rows }, (_, index) => (
-          <TableRow
-            key={index}
-            className="hover:bg-transparent [&_[data-slot=skeleton]]:h-4 [&_[data-slot=table-cell]]:p-6"
-          >
-            <TableCell>
-              <Skeleton className={nameWidths[index % nameWidths.length]} />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="w-28" />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="w-28" />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="ml-auto w-4 rounded-sm" />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="ml-auto w-4 rounded-sm" />
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
   );
 }
 
