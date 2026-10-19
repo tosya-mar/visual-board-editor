@@ -25,18 +25,20 @@ export const BoardActions = ({
   onRename,
   onDelete,
   isPending,
+  onClick,
 }: {
   boardId: string;
   boardName: string;
   onRename: (name: string) => Promise<unknown>;
   onDelete: () => Promise<unknown>;
   isPending: boolean;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }) => {
   const [renameOpen, setRenameOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
 
   return (
-    <>
+    <section onClick={onClick}>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" type="reset">
@@ -137,6 +139,6 @@ export const BoardActions = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </section>
   );
 };

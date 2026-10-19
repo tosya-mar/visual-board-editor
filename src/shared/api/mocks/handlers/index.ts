@@ -3,20 +3,23 @@ import type { ApiSchemas } from "@shared/api/schema";
 import { verifyTokenOrThrow } from "./session";
 import { delay, HttpResponse } from "msw";
 
-const boards: ApiSchemas["Board"][] = Array.from({ length: 1000 }, (_, index) => {
-  const createdAt = new Date(Date.now() - index * 1000 * 60 * 60 * 24);
-  const updatedAt = new Date(createdAt.getTime() + 1000 * 60 * 60 * 12);
-  const lastOpenedAt = new Date(createdAt.getTime() + 1000 * 60 * 60 * 24);
+const boards: ApiSchemas["Board"][] = Array.from(
+  { length: 1000 },
+  (_, index) => {
+    const createdAt = new Date(Date.now() - index * 1000 * 60 * 60 * 24);
+    const updatedAt = new Date(createdAt.getTime() + 1000 * 60 * 60 * 12);
+    const lastOpenedAt = new Date(createdAt.getTime() + 1000 * 60 * 60 * 24);
 
-  return {
-    id: crypto.randomUUID(),
-    name: `Board ${index + 1}`,
-    createdAt: createdAt.toISOString(),
-    updatedAt: updatedAt.toISOString(),
-    lastOpenedAt: lastOpenedAt.toISOString(),
-    isFavorite: index % 5 === 0,
-  };
-});
+    return {
+      id: crypto.randomUUID(),
+      name: `Board ${index + 1}`,
+      createdAt: createdAt.toISOString(),
+      updatedAt: updatedAt.toISOString(),
+      lastOpenedAt: lastOpenedAt.toISOString(),
+      isFavorite: index % 5 === 0,
+    };
+  },
+);
 
 // TODO: remove this later
 boards.push({
@@ -32,9 +35,9 @@ export const handlers = [
   http.get("/boards", async ({ request, query, response }) => {
     await verifyTokenOrThrow(request);
     await delay(200);
-    
+
     const page = Number(query.get("page") || 1);
-    const limit = Number(query.get("limit") || 20);
+    const limit = Number(query.get("limit") ?? 1000);
     const sort = query.get("sort") || "createdAt";
     const search = query.get("search") || "";
     let filteredBoards = [...boards];
@@ -66,11 +69,14 @@ export const handlers = [
     const start = (page - 1) * limit;
     const paginatedBoards = filteredBoards.slice(start, start + limit);
 
-    return HttpResponse.json({
-      boards: paginatedBoards,
-      total,
-      totalPages,
-    }, { status: 200 });
+    return HttpResponse.json(
+      {
+        boards: paginatedBoards,
+        total,
+        totalPages,
+      },
+      { status: 200 },
+    );
   }),
 
   http.get("/boards/{boardId}", async ({ request, params }) => {
@@ -80,10 +86,13 @@ export const handlers = [
     const board = boards.find((board) => board.id === params.boardId);
 
     if (!board) {
-      return HttpResponse.json({
-        message: "Board not found",
-        code: "NOT_FOUND",
-      }, { status: 404 });
+      return HttpResponse.json(
+        {
+          message: "Board not found",
+          code: "NOT_FOUND",
+        },
+        { status: 404 },
+      );
     }
 
     return HttpResponse.json(board, { status: 200 });
@@ -115,16 +124,18 @@ export const handlers = [
     const board = boards[boardIndex];
 
     if (!board) {
-      return HttpResponse.json({
-        message: "Board not found",
-        code: "NOT_FOUND",
-      }, { status: 404 });
+      return HttpResponse.json(
+        {
+          message: "Board not found",
+          code: "NOT_FOUND",
+        },
+        { status: 404 },
+      );
     }
 
     const body = await request.json();
 
-
-    if('isFavorite' in body) {
+    if ("isFavorite" in body) {
       board.isFavorite = body.isFavorite;
     }
 
@@ -137,7 +148,6 @@ export const handlers = [
     return HttpResponse.json(updatedBoard, { status: 201 });
   }),
 
-
   http.put("/boards/{boardId}/rename", async ({ request, params }) => {
     await verifyTokenOrThrow(request);
     await delay(200);
@@ -146,16 +156,18 @@ export const handlers = [
     const board = boards[boardIndex];
 
     if (!board) {
-      return HttpResponse.json({
-        message: "Board not found",
-        code: "NOT_FOUND",
-      }, { status: 404 });
+      return HttpResponse.json(
+        {
+          message: "Board not found",
+          code: "NOT_FOUND",
+        },
+        { status: 404 },
+      );
     }
 
     const body = await request.json();
 
-
-    if('name' in body) {
+    if ("name" in body) {
       board.name = body.name;
     }
 
@@ -175,13 +187,16 @@ export const handlers = [
     const boardIndex = boards.findIndex((board) => board.id === params.boardId);
 
     if (boardIndex === -1) {
-      return HttpResponse.json({
-        message: "Board not found",
-        code: "NOT_FOUND",
-      }, { status: 404 });
+      return HttpResponse.json(
+        {
+          message: "Board not found",
+          code: "NOT_FOUND",
+        },
+        { status: 404 },
+      );
     }
 
     boards.splice(boardIndex, 1);
     return HttpResponse.json(null, { status: 204 });
-  })
+  }),
 ];
