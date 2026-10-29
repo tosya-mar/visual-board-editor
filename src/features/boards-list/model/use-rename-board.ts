@@ -12,6 +12,11 @@ export const useRenameBoard = () => {
   });
 
   return {
-    renameBoard,
+    renameBoard: (boardId: string, name: string) =>
+      renameBoard.mutateAsync({
+        params: { path: { boardId } },
+        body: { name },
+      }),
+    isPending: renameBoard.isPending,
   };
 };

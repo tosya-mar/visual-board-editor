@@ -1,5 +1,6 @@
-import { Table, TableHeader } from "@shared/ui/kit/table";
 import {
+  Table,
+  TableHeader,
   TableRow,
   TableHead,
   TableBody,
@@ -7,7 +8,13 @@ import {
 } from "@shared/ui/kit/table";
 import { Skeleton } from "@shared/ui/kit/skeleton";
 
-export const BoardsTableSkeleton = ({ rows = 10 }: { rows?: number }) => {
+export const BoardsTableSkeleton = ({
+  rows = 10,
+  headers,
+}: {
+  rows?: number;
+  headers: { id: string; label: React.ReactNode }[];
+}) => {
   const nameWidths = [
     "w-2/5",
     "w-1/3",
@@ -25,11 +32,9 @@ export const BoardsTableSkeleton = ({ rows = 10 }: { rows?: number }) => {
     <Table>
       <TableHeader>
         <TableRow className="cursor-default hover:bg-transparent">
-          <TableHead>Name</TableHead>
-          <TableHead>Created At</TableHead>
-          <TableHead>Updated At</TableHead>
-          <TableHead />
-          <TableHead />
+          {headers.map((header) => (
+            <TableHead key={header.id}>{header.label}</TableHead>
+          ))}
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -38,21 +43,17 @@ export const BoardsTableSkeleton = ({ rows = 10 }: { rows?: number }) => {
             key={index}
             className="hover:bg-transparent [&_[data-slot=skeleton]]:h-4 [&_[data-slot=table-cell]]:p-6"
           >
-            <TableCell>
-              <Skeleton className={nameWidths[index % nameWidths.length]} />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="w-28" />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="w-28" />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="ml-auto w-4 rounded-sm" />
-            </TableCell>
-            <TableCell>
-              <Skeleton className="ml-auto w-4 rounded-sm" />
-            </TableCell>
+            {headers.map((header, columnIndex) => (
+              <TableCell key={header.id}>
+                <Skeleton
+                  className={
+                    columnIndex === 0
+                      ? nameWidths[index % nameWidths.length]
+                      : "w-28"
+                  }
+                />
+              </TableCell>
+            ))}
           </TableRow>
         ))}
       </TableBody>
