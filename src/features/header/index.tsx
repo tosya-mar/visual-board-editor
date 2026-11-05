@@ -1,5 +1,7 @@
 import { useSession } from "@/shared/model/session";
 import { Button } from "@/shared/ui/kit/button";
+import { Logo } from "@shared/ui/logo";
+import { ThemeToggle } from "@shared/ui/theme/theme-toggle";
 import { useNavigate } from "react-router-dom";
 
 export function AppHeader() {
@@ -11,17 +13,18 @@ export function AppHeader() {
   }
 
   return (
-    <header className="shrink-0 bg-background border-b border-border/40 shadow-sm py-3 px-4">
+    <header className="shrink-0 bg-background border-b border-border shadow-sm py-3 px-4">
       <div className="mx-auto flex items-center justify-between">
         <button
           className="flex items-center gap-2 text-xl font-semibold cursor-pointer"
           onClick={() => navigate("/")}
         >
-          <img src="/logo.png" alt="" className="size-8 rounded-md" />
+          <Logo />
           Board Editor
         </button>
 
         <div className="flex items-center gap-4">
+          <ThemeToggle />
           <span className="text-sm text-muted-foreground">{session.email}</span>
           <Button variant="outline" size="sm" onClick={() => logout()}>
             Выйти

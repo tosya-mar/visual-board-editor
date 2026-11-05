@@ -25,10 +25,12 @@ export const router = createBrowserRouter([
       {
         loader: protectedLoader,
         element: (
-          <>
+          <div className="flex min-h-0 flex-1 flex-col">
             <AppHeader />
-            <ProtectedRoute />
-          </>
+            <div className="flex min-h-0 flex-1 flex-col">
+              <ProtectedRoute />
+            </div>
+          </div>
         ),
         children: [
           {

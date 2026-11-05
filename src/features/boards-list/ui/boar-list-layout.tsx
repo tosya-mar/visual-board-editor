@@ -20,9 +20,11 @@ export function BoardListLayout({
 }) {
   return (
     <div className="flex h-full min-h-0 flex-col gap-4 p-4">
-      {header}
-      <div className="flex items-center justify-between gap-2">{filters}</div>
-      <div className="min-h-0 flex-1 overflow-auto">{content}</div>
+      <div className="shrink-0">{header}</div>
+      <div className="shrink-0">{filters}</div>
+      <div className="min-h-0 flex-1 overflow-y-scroll [scrollbar-gutter:stable]">
+        {content}
+      </div>
     </div>
   );
 }
@@ -38,8 +40,10 @@ export function BoardListLayoutFilters({
 }) {
   return (
     <div className="flex items-center justify-between gap-2">
-      <div>{filters}</div>
-      <div>{sort}</div>
+      <div className="flex items-center gap-2">
+        {filters}
+        {sort}
+      </div>
       <div>{actions}</div>
     </div>
   );
@@ -69,7 +73,12 @@ export function BoardListLayoutTable({
   isFetchingNextPage,
   children,
 }: {
-  headers: { id: string; label: React.ReactNode }[];
+  headers: {
+    id: string;
+    label: React.ReactNode;
+    className?: string;
+    width?: string;
+  }[];
   isPending: boolean;
   isEmpty: boolean;
   hasNextPage: boolean;
@@ -82,11 +91,15 @@ export function BoardListLayoutTable({
   }
 
   return (
-    <Table>
+    <Table className="table-fixed">
       <TableHeader>
         <TableRow className="cursor-default">
           {headers.map((header) => (
-            <TableHead key={header.id} id={header.id}>
+            <TableHead
+              key={header.id}
+              id={header.id}
+              className={header.className}
+            >
               {header.label}
             </TableHead>
           ))}
@@ -141,7 +154,10 @@ export function BoardListLayoutCards({
       )}
 
       {hasNextPage && (
-        <div ref={cursorRef} className="py-4 text-center text-sm text-muted-foreground">
+        <div
+          ref={cursorRef}
+          className="py-4 text-center text-sm text-muted-foreground"
+        >
           {isFetchingNextPage && "Загрузка досок..."}
         </div>
       )}

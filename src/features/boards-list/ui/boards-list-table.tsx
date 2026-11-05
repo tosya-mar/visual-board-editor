@@ -3,6 +3,8 @@ import type { ApiSchemas } from "@shared/api/schema";
 import { BoardListLayoutTable } from "./boar-list-layout";
 import { BoardsListRow } from "./boards-list-row";
 import {
+  boardsListActionsColumnClassName,
+  boardsListActionsColumnWidth,
   boardsListColumns,
   type BoardsListColumn,
 } from "./boards-list-columns";
@@ -32,8 +34,15 @@ export function BoardsListTable({
     ...columns.map((column) => ({
       id: column.id,
       label: column.header,
+      className: column.className,
+      width: column.width,
     })),
-    { id: "actions", label: null },
+    {
+      id: "actions",
+      label: null,
+      className: boardsListActionsColumnClassName,
+      width: boardsListActionsColumnWidth,
+    },
   ];
 
   return (

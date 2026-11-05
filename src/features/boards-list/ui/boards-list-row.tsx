@@ -1,6 +1,9 @@
 import { TableCell, TableRow } from "@shared/ui/kit/table";
 import type { ApiSchemas } from "@shared/api/schema";
-import type { BoardsListColumn } from "./boards-list-columns";
+import {
+  boardsListActionsColumnClassName,
+  type BoardsListColumn,
+} from "./boards-list-columns";
 
 export function BoardsListRow({
   board,
@@ -25,8 +28,10 @@ export function BoardsListRow({
       ))}
 
       {actions != null && (
-        <TableCell className="flex items-right justify-end gap-10">
-          {actions}
+        <TableCell
+          className={`${boardsListActionsColumnClassName} text-right`}
+        >
+          <div className="flex items-center justify-end gap-2">{actions}</div>
         </TableCell>
       )}
     </TableRow>

@@ -13,27 +13,21 @@ export const BoardsTableSkeleton = ({
   headers,
 }: {
   rows?: number;
-  headers: { id: string; label: React.ReactNode }[];
+  headers: {
+    id: string;
+    label: React.ReactNode;
+    className?: string;
+    width?: string;
+  }[];
 }) => {
-  const nameWidths = [
-    "w-2/5",
-    "w-1/3",
-    "w-1/2",
-    "w-3/5",
-    "w-2/5",
-    "w-1/4",
-    "w-1/2",
-    "w-1/3",
-    "w-2/5",
-    "w-1/2",
-  ];
-
   return (
-    <Table>
+    <Table className="table-fixed">
       <TableHeader>
         <TableRow className="cursor-default hover:bg-transparent">
           {headers.map((header) => (
-            <TableHead key={header.id}>{header.label}</TableHead>
+            <TableHead key={header.id} className={header.className}>
+              {header.label}
+            </TableHead>
           ))}
         </TableRow>
       </TableHeader>
@@ -41,17 +35,11 @@ export const BoardsTableSkeleton = ({
         {Array.from({ length: rows }, (_, index) => (
           <TableRow
             key={index}
-            className="hover:bg-transparent [&_[data-slot=skeleton]]:h-4 [&_[data-slot=table-cell]]:p-6"
+            className="hover:bg-transparent [&_[data-slot=skeleton]]:h-4 [&_[data-slot=table-cell]]:p-4"
           >
-            {headers.map((header, columnIndex) => (
-              <TableCell key={header.id}>
-                <Skeleton
-                  className={
-                    columnIndex === 0
-                      ? nameWidths[index % nameWidths.length]
-                      : "w-28"
-                  }
-                />
+            {headers.map((header) => (
+              <TableCell key={header.id} className={header.className}>
+                <Skeleton className={header.width ?? "w-24"} />
               </TableCell>
             ))}
           </TableRow>

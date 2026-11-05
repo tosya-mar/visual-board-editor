@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@shared/ui/kit/card";
+import { Logo } from "@shared/ui/logo";
 
 export default function AuthLayout({
   title,
@@ -21,7 +22,7 @@ export default function AuthLayout({
   return (
     <main className="flex flex-col pt-15 items-center text-start gap-10">
       <button className="flex items-center gap-2 text-xl font-semibold cursor-pointer">
-        <img src="/logo.png" alt="" className="size-8 rounded-md" />
+        <Logo />
         Board Editor
       </button>
       <Card className="w-full max-w-[400px] p-5 ">
@@ -31,7 +32,7 @@ export default function AuthLayout({
         </CardHeader>
 
         <CardContent>{form}</CardContent>
-        <CardFooter className="bg-accent-foreground">
+        <CardFooter className="bg-card">
           <p className="text-sm text-muted-foreground [&_a]:underline [&_a]:text-primary">
             {footer}
           </p>

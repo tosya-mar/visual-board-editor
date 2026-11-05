@@ -1,10 +1,26 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" suppressHydrationWarning>
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/public/logo.png" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>visual-board-editor</title>
+
+    <script>
+      (function() {
+        try {
+          var t = localStorage.getItem('theme'); 
+          if (t !== 'light' && t !== 'dark' && t !== 'system') {
+            t = 'system'; 
+          }
+          var d = matchMedia('(prefers-color-scheme: dark)').matches;
+          var r = t === 'system' ? (d ? 'dark' : 'light') : t;
+          var e = document.documentElement;
+          e.classList.add(r);
+          e.style.colorScheme = r;
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
